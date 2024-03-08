@@ -1,0 +1,52 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: cli",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "jxa_builder.cli",
+      "justMyCode": true,
+      "args": [
+        "install",
+        // "--help"
+        "--debug",
+        "--locations-file",
+        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json",
+        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
+      ]
+      // "args": [
+      //   "build",
+      //   "--debug",
+      //   "--project-dir",
+      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
+      //   "--version",
+      //   "3.8.0",
+      //   // "--app-icon",
+      //   // "non_existing_icon.icns",
+      //   "--comp-mode",
+      //   "app"
+      // ]
+    },
+    {
+      "name": "Python: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "args": [
+        "build",
+        "--project-dir",
+        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
+        "--version",
+        "3.8.0",
+        "--comp-mode",
+        "script"
+      ]
+    }
+  ]
+}
