@@ -1,16 +1,15 @@
-from typing import Optional, Literal, Dict, Callable
-from typing_extensions import Annotated
+from typing import Optional, Literal, Dict, Callable, List, Dict, Tuple
 import os
 from os import path as p
 import json
-from pydantic import (BaseModel, ConfigDict, ValidationError,
-                      StringConstraints, field_validator)
-from pydantic.alias_generators import to_camel, to_snake
+from pydantic import ValidationError
 from jxa_builder.core.constants import PACKAGE_JSON_FILE, JXA_JSON_FILE
 from jxa_builder.utils.remove_empty_values import remove_empty_values
 from jxa_builder.utils.logger import logger
+from jxa_builder.utils.recase import recase
 from jxa_builder.utils.printit import terminate_with_error
-from jxa_builder.core.models import JxaProjectConfig, SEM_VER
+from jxa_builder.core.models import JxaProjectConfig, SEM_VER, LoadedPropInfo
+from jxa_builder.core.constants import IS_RICH
 
 
 def get_json_obj(file_path: str) -> Dict[str, any]:
@@ -34,31 +33,82 @@ def get_json_obj(file_path: str) -> Dict[str, any]:
   return json_dict
 
 
-ErrorsNumber = int
-OriginalName = str
+def get_project_config(
+    project_dir: str,
+    overrides: Optional[Dict[str, LoadedPropInfo]] = None) -> JxaProjectConfig:
+  logger.debug(f'Getting project config of: {project_dir}')
 
+  def to_snake_dict(d: Dict[str, any]) -> Dict[str, any]:
+    return {recase(k, 'snake'): v for k, v in d.items()}
 
-def validate_dict_with_model(
-    json_obj: Dict[str, any],
-    *,
-    error_msg_header: Optional[Callable[[ErrorsNumber], str]] = None,
-    prop_alt_name: Optional[Callable[[OriginalName], str]] = None,
-):
+  properties: Dict[str, LoadedPropInfo] = {}
+
+  package_json_file = p.join(project_dir, PACKAGE_JSON_FILE)
+  jxa_json_file = p.join(project_dir, JXA_JSON_FILE)
+
+  # package.json
+  package_json = get_json_obj(package_json_file)
+  package_json = {
+      'app_name': package_json.get('name'),
+      'version': package_json.get('version'),
+      'main': package_json.get('main'),
+  }
+  package_json = remove_empty_values(package_json)
+  if package_json:
+    properties.update({
+        k:
+        LoadedPropInfo(v, package_json_file, recase(k, 'camel'))
+        for k, v in package_json.items()
+    })
+
+  # package.json jxa property
+  package_json = get_json_obj(package_json_file)
+  package_json = remove_empty_values(package_json)
+  package_json_jxa = package_json.get('jxa', {})
+  package_json_jxa = to_snake_dict(package_json_jxa)
+  if not isinstance(package_json_jxa, dict):
+    terminate_with_error(
+        f'Invalid type in "{package_json_file}": The "jxa" must be an object.')
+  if package_json_jxa:
+    properties.update({
+        k:
+        LoadedPropInfo(v, f'{package_json_file} "jxa" property',
+                       recase(k, 'camel'))
+        for k, v in package_json_jxa.items()
+    })
+
+  # jxa.json
+  jxa_json = get_json_obj(jxa_json_file)
+  jxa_json = remove_empty_values(jxa_json)
+  jxa_json = to_snake_dict(jxa_json)
+  if jxa_json:
+    properties.update({
+        k: LoadedPropInfo(v, jxa_json_file, recase(k, 'camel'))
+        for k, v in jxa_json.items()
+    })
+
+  # overrides
+  if overrides:
+    cli_dict = {k: v.value for k, v in overrides.items()}
+    cli_dict = remove_empty_values(cli_dict)
+    cli_dict = to_snake_dict(cli_dict)
+    properties.update({
+        k:
+        LoadedPropInfo(v, overrides[k].origin, overrides[k].original_name)
+        for k, v in cli_dict.items()
+    })
+
   try:
-    logger.debug(f'Validating: {json_obj}')
-    JxaProjectConfig(**json_obj)
+    return JxaProjectConfig(**{k: v.value for k, v in properties.items()})
   except ValidationError as e:
     errors = e.errors()
-    error_msg = ''
-    if error_msg_header:
-      error_msg += error_msg_header(len(errors))
-    else:
-      error_msg += f'\n{len(errors)} validation error(s)'
+    error_msg = f'\n{len(errors)} validation error(s)'
     for error in e.errors():
       prop = error['loc'][0]
-      if prop_alt_name:
-        prop = prop_alt_name(prop)
-      error_msg += f'\n{prop}'
+      prop_info = properties[prop]
+      error_msg += (f'\n[bold cyan]{prop_info.original_name}[/bold cyan]'
+                    if IS_RICH else f'\n{prop_info.original_name}') + (
+                        f" in {prop_info.origin}" if prop_info.origin else "")
       if error['type'] == 'extra_forbidden':
         error_msg += f'''\n  Unrecognized property (input value: '{error["input"]}')'''
       elif error['type'] == 'string_pattern_mismatch' and error['ctx'][
@@ -70,81 +120,5 @@ def validate_dict_with_model(
         error_msg += f'''\n  {error["msg"]} (input value: '{error["input"]}')'''
 
     terminate_with_error(error_msg)
-
-
-def cmd_args_override(cmd_overrides: Dict[str, any]) -> Dict[str, any]:
-  if cmd_overrides:
-    cmd_overrides = {to_camel(k): v for k, v in cmd_overrides.items()}
-    cmd_overrides = remove_empty_values(cmd_overrides)
-    to_kebab = lambda s: s.replace('_', '-')
-    validate_dict_with_model(
-        cmd_overrides,
-        error_msg_header=lambda n:
-        f'{n} validation error(s) in command line arguments',
-        prop_alt_name=lambda s: f'--{to_kebab(to_snake(s))}',
-    )
-  return cmd_overrides
-
-
-def get_project_config(
-    project_dir: str,
-    override_func: Optional[Callable[..., Dict[str, any]]] = None
-) -> 'JxaProjectConfig':
-  logger.debug(f'Getting project config of: {project_dir}')
-  if not p.exists(project_dir):
-    terminate_with_error(f'"{project_dir}" does not exist')
-  if not p.isdir(project_dir):
-    terminate_with_error(f'"{project_dir}" is not a directory')
-
-  package_json_file = p.join(project_dir, PACKAGE_JSON_FILE)
-  jxa_json_file = p.join(project_dir, JXA_JSON_FILE)
-  project_config = JxaProjectConfig()
-
-  # package.json
-  package_json = get_json_obj(package_json_file)
-  name = package_json.get('name')
-  version = package_json.get('version')
-  main = package_json.get('main')
-  package_json = {'appName': name, 'version': version, 'main': main}
-  package_json = remove_empty_values(package_json)
-  if package_json:
-    validate_dict_with_model(
-        package_json,
-        error_msg_header=lambda n:
-        f'{n} validation error(s) in "{package_json_file}"',
-    )
-    project_config = project_config.model_copy(update=package_json)
-
-  # package.json jxa property
-  package_json = get_json_obj(package_json_file)
-  package_json = remove_empty_values(package_json)
-  package_json_jxa = package_json.get('jxa', {})
-  if not isinstance(package_json_jxa, dict):
-    terminate_with_error(
-        f'Invalid type in "{package_json_file}": The "jxa" must be an object.')
-  if package_json_jxa:
-    validate_dict_with_model(
-        package_json_jxa,
-        error_msg_header=lambda n:
-        f'{n} validation error(s) in "{package_json_file}"',
-        prop_alt_name=lambda s: f'jxa.{s}',
-    )
-    project_config = project_config.model_copy(update=package_json_jxa)
-
-    # jxa.json
-    jxa_json = get_json_obj(jxa_json_file)
-    jxa_json = remove_empty_values(jxa_json)
-    if jxa_json:
-      validate_dict_with_model(
-          jxa_json,
-          error_msg_header=lambda n:
-          f'{n} validation error(s) in "{jxa_json_file}"',
-      )
-      project_config = project_config.model_copy(update=jxa_json)
-
-    # overrides
-    if override_func:
-      overrides = override_func()
-      if overrides:
-        project_config = project_config.model_copy(update=overrides)
-  return project_config
+    # logger.fatal(error_msg)
+    # exit(1)
