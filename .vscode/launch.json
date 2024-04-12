@@ -6,27 +6,28 @@
       "type": "debugpy",
       "request": "launch",
       "module": "jxa_builder.cli",
-      // "justMyCode": true,
-      // "args": [
-      //   "install",
-      //   // "--help"
-      //   "--debug",
-      //   "--locations-file",
-      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json",
-      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
-      // ]
+      "justMyCode": true,
       "args": [
-        "build",
+        "install",
+        // "--help"
         "--debug",
-        "--project-dir",
-        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
-        "--version",
-        "3.8.0",
-        // "--app-icon",
-        // "non_existing_icon.icns",
-        "--comp-mode",
-        "app"
+        "--path",
+        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
       ]
+      // "args": [
+      //   "build",
+      //   "--debug",
+      //   "--project-dir",
+      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
+      //   "--version",
+      //   "3.8.0",
+      //   "--app-icon",
+      //   "icon.icns",
+      //   "--comp-mode",
+      //   "app",
+      //   "--deps-install-mode",
+      //   "app"
+      // ]
     },
     {
       "name": "Python: Current File",
