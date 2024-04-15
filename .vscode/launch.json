@@ -8,12 +8,18 @@
       "module": "jxa_builder.cli",
       "justMyCode": true,
       "args": [
-        "install",
+        "freeze-nodejs-deps",
         "--debug",
-        // "--deps-only",
-        "--path",
-        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
+        "--project-dir",
+        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit"
       ]
+      // "args": [
+      //   "install",
+      //   "--debug",
+      //   // "--deps-only",
+      //   "--path",
+      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
+      // ]
       // "args": [
       //   "build",
       //   "--debug",
@@ -26,7 +32,7 @@
       //   "--comp-mode",
       //   "app",
       //   "--deps-install-mode",
-      //   "user"
+      //   "user",
       // ]
     },
     {
