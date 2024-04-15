@@ -9,8 +9,8 @@
       "justMyCode": true,
       "args": [
         "install",
-        // "--help"
         "--debug",
+        // "--deps-only",
         "--path",
         "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
       ]
@@ -26,7 +26,7 @@
       //   "--comp-mode",
       //   "app",
       //   "--deps-install-mode",
-      //   "app"
+      //   "user"
       // ]
     },
     {
