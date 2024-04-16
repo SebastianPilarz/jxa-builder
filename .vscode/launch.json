@@ -6,10 +6,9 @@
       "type": "debugpy",
       "request": "launch",
       "module": "jxa_builder.cli",
-      "justMyCode": true,
+      "justMyCode": true
       // "args": [
       //   "freeze-nodejs-deps",
-      //   "--debug",
       //   "--project-dir",
       //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit"
       // ]
@@ -20,41 +19,31 @@
       //   "--path",
       //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
       // ]
-      "args": [
-        "build",
-        "--debug",
-        "--project-dir",
-        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
-        "--version",
-        "3.8.0",
-        // "--app-icon",
-        // "icon.icns",
-        "--comp-mode",
-        "script",
-        "--deps-install-mode",
-        "app"
-      ]
+      // "args": [
+      //   "build",
+      //   "--debug",
+      //   "--project-dir",
+      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
+      //   "--version",
+      //   "3.8.0",
+      //   "--app-icon",
+      //   "icon.icns",
+      //   "--comp-mode",
+      //   "app",
+      //   "--deps-install-mode",
+      //   "user",
+      // ]
     },
     {
       "name": "Python: Current File",
       "type": "debugpy",
       "request": "launch",
       "program": "${file}",
-      "console": "integratedTerminal",
+      "console": "integratedTerminal"
       // "justMyCode": true,
       // "env": {
       //   "PYTHONPATH": "${workspaceFolder}"
       // },
-      "args": [
-        "build",
-        "--debug",
-        "--project-dir",
-        "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
-        "--version",
-        "3.8.0",
-        "--comp-mode",
-        "script"
-      ]
     }
   ]
 }
