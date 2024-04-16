@@ -26,24 +26,13 @@
       //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
       //   "--version",
       //   "3.8.0",
-      //   "--app-icon",
-      //   "icon.icns",
+      //   // "--app-icon",
+      //   // "icon.icns",
       //   "--comp-mode",
       //   "app",
       //   "--deps-install-mode",
-      //   "user",
+      //   "user"
       // ]
-    },
-    {
-      "name": "Python: Current File",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${file}",
-      "console": "integratedTerminal"
-      // "justMyCode": true,
-      // "env": {
-      //   "PYTHONPATH": "${workspaceFolder}"
-      // },
     }
   ]
 }
