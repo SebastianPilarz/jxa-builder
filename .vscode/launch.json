@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: cli",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "jxa_builder.cli",
+      "justMyCode": true
+      // "args": [
+      //   "freeze-nodejs-deps",
+      //   "--project-dir",
+      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit"
+      // ]
+      // "args": [
+      //   "install",
+      //   "--debug",
+      //   // "--deps-only",
+      //   "--path",
+      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
+      // ]
+      // "args": [
+      //   "build",
+      //   "--debug",
+      //   "--project-dir",
+      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
+      //   "--version",
+      //   "3.8.0",
+      //   // "--app-icon",
+      //   // "icon.icns",
+      //   "--comp-mode",
+      //   "app",
+      //   "--deps-install-mode",
+      //   "user"
+      // ]
+    }
+  ]
+}
