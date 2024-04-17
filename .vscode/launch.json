@@ -9,21 +9,22 @@
       "justMyCode": true
       // "args": [
       //   "freeze-nodejs-deps",
+      //   "--debug",
       //   "--project-dir",
-      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit"
+      //   "/Users/sebastian/Documents/src/js/double-click-to-edit"
       // ]
       // "args": [
       //   "install",
       //   "--debug",
       //   // "--deps-only",
       //   "--path",
-      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit/build/locations.json"
+      //   "/Users/sebastian/Documents/src/js/double-click-to-edit/build/locations.json"
       // ]
       // "args": [
       //   "build",
       //   "--debug",
       //   "--project-dir",
-      //   "/Users/sebastian/Documents/src/js/DoubleClickConsoleEdit",
+      //   "/Users/sebastian/Documents/src/js/double-click-to-edit",
       //   "--version",
       //   "3.8.0",
       //   // "--app-icon",
